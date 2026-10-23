@@ -75,12 +75,17 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-siz
 .kifu{position:absolute;z-index:3;right:max(12px,env(safe-area-inset-right,0px));bottom:10px;font-size:12px;letter-spacing:.03em;padding:3px 10px;border-radius:999px;background:rgba(20,16,10,.66);color:#f6f1e4}
 
 /* 곧 열어요 */
-.soon{margin-top:22px}
-.soon h3{margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.soon,.latest{margin-top:22px}
+.soon h3,.latest h3{margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
 .btn.off{background:transparent;border-style:dashed;cursor:default;color:var(--muted)}
 .btn.off:hover{border-color:var(--line)}
 .btn.off b{color:var(--ink)}
 .badge{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+
+/* 최신 글 */
+.latest .btn .meta{display:block;margin-top:2px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.latest .btn b{display:block;overflow-wrap:anywhere}
+@media (prefers-reduced-motion:no-preference){.latest.show .btn{animation:fade .5s ease both}.latest.show .btn:nth-child(2){animation-delay:.08s}.latest.show .btn:nth-child(3){animation-delay:.16s}}
 
 /* 머리: 프로필과 이름 */
 .head{position:relative;margin-top:-48px;display:flex;flex-direction:column;gap:10px}
@@ -205,6 +210,11 @@ h1 span:nth-child(3){animation-delay:.24s}
       </a>
     </nav>
 
+    <section class="latest" id="latest" hidden aria-labelledby="latestTitle">
+      <h3 id="latestTitle">최신 글</h3>
+      <div class="links" id="latestList" style="margin-top:0"></div>
+    </section>
+
     <div class="soon">
       <h3>곧 열어요</h3>
       <div class="links" style="margin-top:0">
@@ -235,7 +245,7 @@ h1 span:nth-child(3){animation-delay:.24s}
     <footer>
       <p>이 페이지는 쿠키를 쓰지 않고, 방문을 세지 않습니다.</p>
       <p>바깥 글꼴도 불러오지 않아요.</p>
-      <p>마지막 손질: 2026년 10월 23일</p>
+      <p>마지막 손질: 2026년 10월 24일</p>
     </footer>
   </div>
 </div>
@@ -253,7 +263,7 @@ h1 span:nth-child(3){animation-delay:.24s}
   zoom.addEventListener('click',close);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&zoom.classList.contains('on'))close();});
   /* 4 누른 자리 물결 */
-  document.querySelectorAll('.links .btn:not(.off)').forEach(function(b){
+  function addWave(b){
     b.addEventListener('pointerdown',function(e){
       if(still)return;
       var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)*2.2,w=document.createElement('span');
@@ -261,7 +271,24 @@ h1 span:nth-child(3){animation-delay:.24s}
       w.style.left=(e.clientX-r.left-s/2)+'px';w.style.top=(e.clientY-r.top-s/2)+'px';
       b.appendChild(w);setTimeout(function(){w.remove();},700);
     });
-  });
+  }
+  document.querySelectorAll('.links .btn:not(.off)').forEach(addWave);
+  /* 최신 글 */
+  var latest=document.getElementById('latest'),list=document.getElementById('latestList');
+  fetch('posts.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(posts){
+    if(!Array.isArray(posts)||!posts.length)return;
+    posts.slice(0,3).forEach(function(p){
+      if(!p||!p.title||!/^https:\/\//.test(p.url||''))return;
+      var a=document.createElement('a');a.className='btn';a.href=p.url;a.target='_blank';a.rel='noopener';
+      var t=document.createElement('span');t.className='txt';
+      var b=document.createElement('b');b.textContent=p.title;
+      var m=document.createElement('span');m.className='meta';m.textContent=(p.date||'').replace(/-/g,'.')+' · '+(p.source||'');
+      t.appendChild(b);t.appendChild(m);
+      var ar=document.createElement('span');ar.className='arrow';ar.setAttribute('aria-hidden','true');ar.textContent='→';
+      a.appendChild(t);a.appendChild(ar);addWave(a);list.appendChild(a);
+    });
+    if(list.children.length){latest.hidden=false;latest.classList.add('show');}
+  }).catch(function(){});
   /* 5 흐르는 점선, 말풍선 */
   var offs=[].slice.call(document.querySelectorAll('.btn.off'));
   function fit(){offs.forEach(function(o){var r=o.getBoundingClientRect(),rc=o.querySelector('rect');rc.setAttribute('width',Math.max(0,r.width-1));rc.setAttribute('height',Math.max(0,r.height-1));});}
