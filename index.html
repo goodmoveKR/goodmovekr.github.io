@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>좋은수</title>
+<meta name="description" content="책과 영화를 여러 번 다시 보고, 놓친 채 지나간 설명을 복기합니다.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="좋은수">
+<meta property="og:title" content="좋은수">
+<meta property="og:description" content="책과 영화를 여러 번 다시 보고, 놓친 채 지나간 설명을 복기합니다.">
+<meta property="og:url" content="https://goodmovekr.github.io/">
+<meta property="og:image" content="https://goodmovekr.github.io/og-image.png">
+<link rel="canonical" href="https://goodmovekr.github.io/">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="제2국 흑 37수가 놓인 바둑판과 좋은수 이름">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* 레이아웃: 바둑판 배너 한 장(가운데 기준 칸 단위 배치) + 왼쪽 정렬 이름 + 버튼 줄 + 소개 카드 하나 + 정직한 푸터 */
+:root{
+  --bg:#f2f3f1;
+  --surface:#ffffff;
+  --ink:#1d2024;
+  --muted:#5d636b;
+  --line:#d9dcd8;
+  --accent:#2c4a78;
+  --accent-soft:rgba(44,74,120,.1);
+  --board:#d7b679;
+  --board-line:rgba(40,28,10,.42);
+  --stone-black:#16181b;
+  --stone-white:#f7f6f2;
+  --font-display:"AppleMyungjo","Nanum Myeongjo","Noto Serif KR","Batang","바탕",serif;
+  --font-body:"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",system-ui,sans-serif;
+  }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141619;--surface:#1c1f23;--ink:#e9e7e2;--muted:#a3a7ad;--line:#2e3237;
+    --accent:#8fb0e6;--accent-soft:rgba(143,176,230,.12);--board:#7d6337;--board-line:rgba(10,6,0,.55);
+    --stone-black:#0c0d0f;--stone-white:#e6e3db;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141619;--surface:#1c1f23;--ink:#e9e7e2;--muted:#a3a7ad;--line:#2e3237;
+  --accent:#8fb0e6;--accent-soft:rgba(143,176,230,.12);--board:#7d6337;--board-line:rgba(10,6,0,.55);
+  --stone-black:#0c0d0f;--stone-white:#e6e3db;color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.7;word-break:keep-all}
+.page{max-width:600px;margin:0 auto;padding-block:0 40px}
+.pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* 배너: 실제 제2국 37수까지 국면, 바둑판 위쪽 3분의 2를 잘라 보여 줌 */
+.banner{position:relative;overflow:hidden;background:var(--board)}
+@media (min-width:640px){.banner{border-radius:0 0 14px 14px}}
+.board{display:block;width:100%;height:auto}
+.board .bd{fill:var(--board)}
+.board .gl{stroke:var(--board-line);stroke-width:.045}
+.board .gl.edge{stroke-width:.08}
+.board .hs{fill:var(--board-line)}
+.board .st{filter:drop-shadow(0 .06px .08px rgba(0,0,0,.5))}
+.board .glow{fill:rgba(255,244,210,.55);filter:blur(.25px)}
+.board .rg{fill:none;stroke:rgba(255,248,230,.8);stroke-width:.06}
+.board .r2{stroke:rgba(255,248,230,.45)}
+.board .pulse{opacity:0;transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){.board .pulse{animation:ripple 3.2s ease-out infinite}}
+@keyframes ripple{0%{transform:scale(1);opacity:.9}100%{transform:scale(6);opacity:0}}
+.board .mv{fill:#f6f3ea;font-family:var(--font-body);font-weight:700;font-size:.44px;text-anchor:middle;dominant-baseline:central}
+.kifu{position:absolute;z-index:3;right:max(12px,env(safe-area-inset-right,0px));bottom:10px;font-size:12px;letter-spacing:.03em;padding:3px 10px;border-radius:999px;background:rgba(20,16,10,.66);color:#f6f1e4}
+
+/* 곧 열어요 */
+.soon{margin-top:22px}
+.soon h3{margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.btn.off{background:transparent;border-style:dashed;cursor:default;color:var(--muted)}
+.btn.off:hover{border-color:var(--line)}
+.btn.off b{color:var(--ink)}
+.badge{font-size:12px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+
+/* 머리: 프로필과 이름 */
+.head{position:relative;margin-top:-48px;display:flex;flex-direction:column;gap:10px}
+.avatar{width:96px;height:96px;border-radius:50%;border:5px solid var(--bg);cursor:zoom-in;padding:0;
+  background:radial-gradient(circle at 35% 30%,#4a4e55 0,var(--stone-black) 58%);color:#f4f2ec;
+  font-family:var(--font-display);font-size:40px;line-height:1;display:grid;place-items:center}
+.avatar:focus-visible,.btn:focus-visible,.chip:focus-visible,.copy:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1{font-family:var(--font-display);font-weight:700;font-size:34px;line-height:1.2;margin:4px 0 0;letter-spacing:.02em}
+.tagline{margin:0;color:var(--muted);font-size:16px;text-wrap:balance}
+
+/* 버튼 */
+.links{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.btn{display:flex;align-items:center;gap:12px;padding:15px 18px;border:1px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .15s,transform .15s}
+.btn:hover{border-color:var(--accent)}
+.btn .txt{flex:1;min-width:0}
+.btn b{font-weight:700}
+.btn .sub{color:var(--muted)}
+.btn .arrow{color:var(--accent);font-size:18px}
+
+/* SNS */
+.sns{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:14px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--ink);text-decoration:none;background:transparent}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 소개 카드 */
+.card{margin-top:32px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px 22px;display:flex;flex-direction:column;gap:18px}
+.card h2{font-family:var(--font-display);font-size:20px;margin:0}
+.card p{margin:0}
+.qa{display:flex;flex-direction:column;gap:14px;margin:0;padding-top:18px;border-top:1px solid var(--line)}
+.qa dt{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.qa dd{margin:2px 0 0}
+.mail{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mail span{user-select:all;font-variant-numeric:tabular-nums}
+.copy{font:inherit;font-size:13px;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--accent);cursor:pointer}
+
+/* 푸터 */
+footer{margin-top:36px;color:var(--muted);font-size:13px;line-height:1.8}
+footer p{margin:0}
+
+/* 사진 크게 보기 */
+.zoom{position:fixed;inset:0;z-index:20;background:rgba(10,11,13,.82);display:grid;place-items:center;cursor:zoom-out;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.zoom .big{width:min(72vw,320px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#4a4e55 0,#16181b 58%);color:#f4f2ec;
+  font-family:var(--font-display);font-size:min(30vw,130px);display:grid;place-items:center}
+.zoom{opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
+.zoom.on{opacity:1;visibility:visible;transition:opacity .3s}
+.zoom .big{transform:scale(.6);transition:transform .45s cubic-bezier(.2,.8,.2,1.15)}
+.zoom.on .big{transform:none}
+
+/* 효과: 1 이름 떠오름, 2 형광펜 */
+h1 span{display:inline-block;animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+h1 span:nth-child(2){animation-delay:.12s}
+h1 span:nth-child(3){animation-delay:.24s}
+.tagline{animation:fade .8s .5s ease both}
+@keyframes rise{from{transform:translateY(.45em);opacity:0;filter:blur(4px)}to{transform:none;opacity:1;filter:none}}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.mark{color:var(--ink);background-image:linear-gradient(transparent 62%,var(--accent-soft) 62%);background-repeat:no-repeat;background-size:100% 100%;padding:0 2px;animation:mark 1.1s 1.1s cubic-bezier(.6,.1,.2,1) both}
+@keyframes mark{from{background-size:0 100%}to{background-size:100% 100%}}
+
+/* 3 채워지는 버튼, 4 누른 자리 물결 */
+.links .btn:not(.off){position:relative;overflow:hidden;transition:border-color .35s}
+.links .btn:not(.off)::before{content:"";position:absolute;inset:0;background:var(--accent-soft);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.links .btn:not(.off):hover::before,.links .btn:not(.off):focus-visible::before{transform:scaleX(1)}
+.btn .txt,.btn .arrow,.btn .badge{position:relative;z-index:1}
+.btn .arrow{transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.btn:hover .arrow,.btn:focus-visible .arrow{transform:translateX(5px)}
+.wave{position:absolute;border-radius:50%;background:var(--accent);opacity:.18;transform:scale(0);pointer-events:none;animation:wave .6s ease-out forwards}
+@keyframes wave{to{transform:scale(1);opacity:0}}
+
+/* 5 흐르는 점선과 말풍선 */
+.btn.off{border-color:transparent;position:relative}
+.btn.off .border{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.btn.off .border rect{fill:none;stroke:var(--muted);stroke-width:1;stroke-dasharray:6 5;opacity:.7}
+.tip{position:absolute;right:14px;top:-34px;z-index:2;background:var(--ink);color:var(--bg);font-size:12px;padding:4px 10px;border-radius:6px;opacity:0;transform:translateY(4px);transition:.25s;pointer-events:none;white-space:nowrap}
+.btn.off.show .tip{opacity:1;transform:none}
+
+/* 6 손을 따라오는 빛 */
+.card{position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0;background:radial-gradient(280px circle at var(--mx,20%) var(--my,15%),var(--accent-soft),transparent 60%);pointer-events:none}
+.card>*{position:relative}
+
+/* 8 복사 체크와 알림 */
+.copy{display:inline-flex;align-items:center;gap:6px;transition:background .25s,border-color .25s}
+.copy svg{width:13px;height:13px}
+.copy .ck path{stroke-dasharray:14;stroke-dashoffset:14}
+.copy.done{border-color:var(--accent);background:var(--accent-soft)}
+.copy.done .ck path{animation:check .4s ease forwards}
+@keyframes check{to{stroke-dashoffset:0}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);z-index:30;background:var(--ink);color:var(--bg);font-size:13px;padding:7px 16px;border-radius:999px;opacity:0;transition:.3s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="banner">
+    <svg class="board" viewBox="-0.8 1.5 19.6 10" preserveAspectRatio="xMidYMid meet" role="img" aria-label="2016년 3월 10일 제2국, 흑 37수가 놓인 바둑판 오른쪽 위 국면"><defs><radialGradient id="gb" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#555a62"/><stop offset=".6" stop-color="#16181b"/><stop offset="1" stop-color="#0b0c0e"/></radialGradient><radialGradient id="gw" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f3f1eb"/><stop offset="1" stop-color="#c9c4b8"/></radialGradient></defs><rect x="-0.8" y="1.5" width="19.6" height="10" class="bd"/><line x1="0" y1="1.5" x2="0" y2="11.5" class="gl edge"/><line x1="1" y1="1.5" x2="1" y2="11.5" class="gl"/><line x1="2" y1="1.5" x2="2" y2="11.5" class="gl"/><line x1="3" y1="1.5" x2="3" y2="11.5" class="gl"/><line x1="4" y1="1.5" x2="4" y2="11.5" class="gl"/><line x1="5" y1="1.5" x2="5" y2="11.5" class="gl"/><line x1="6" y1="1.5" x2="6" y2="11.5" class="gl"/><line x1="7" y1="1.5" x2="7" y2="11.5" class="gl"/><line x1="8" y1="1.5" x2="8" y2="11.5" class="gl"/><line x1="9" y1="1.5" x2="9" y2="11.5" class="gl"/><line x1="10" y1="1.5" x2="10" y2="11.5" class="gl"/><line x1="11" y1="1.5" x2="11" y2="11.5" class="gl"/><line x1="12" y1="1.5" x2="12" y2="11.5" class="gl"/><line x1="13" y1="1.5" x2="13" y2="11.5" class="gl"/><line x1="14" y1="1.5" x2="14" y2="11.5" class="gl"/><line x1="15" y1="1.5" x2="15" y2="11.5" class="gl"/><line x1="16" y1="1.5" x2="16" y2="11.5" class="gl"/><line x1="17" y1="1.5" x2="17" y2="11.5" class="gl"/><line x1="18" y1="1.5" x2="18" y2="11.5" class="gl edge"/><line x1="0" y1="11" x2="18" y2="11" class="gl"/><line x1="0" y1="10" x2="18" y2="10" class="gl"/><line x1="0" y1="9" x2="18" y2="9" class="gl"/><line x1="0" y1="8" x2="18" y2="8" class="gl"/><line x1="0" y1="7" x2="18" y2="7" class="gl"/><line x1="0" y1="6" x2="18" y2="6" class="gl"/><line x1="0" y1="5" x2="18" y2="5" class="gl"/><line x1="0" y1="4" x2="18" y2="4" class="gl"/><line x1="0" y1="3" x2="18" y2="3" class="gl"/><line x1="0" y1="2" x2="18" y2="2" class="gl"/><circle cx="3" cy="9" r="0.11" class="hs"/><circle cx="3" cy="3" r="0.11" class="hs"/><circle cx="9" cy="9" r="0.11" class="hs"/><circle cx="9" cy="3" r="0.11" class="hs"/><circle cx="15" cy="9" r="0.11" class="hs"/><circle cx="15" cy="3" r="0.11" class="hs"/><circle cx="15" cy="3" r="0.47" fill="url(#gb)" class="st"/><circle cx="2" cy="3" r="0.47" fill="url(#gb)" class="st"/><circle cx="8" cy="2" r="0.47" fill="url(#gb)" class="st"/><circle cx="3" cy="9" r="0.47" fill="url(#gw)" class="st"/><circle cx="2" cy="6" r="0.47" fill="url(#gw)" class="st"/><circle cx="4" cy="3" r="0.47" fill="url(#gb)" class="st"/><circle cx="16" cy="5" r="0.47" fill="url(#gw)" class="st"/><circle cx="16" cy="4" r="0.47" fill="url(#gb)" class="st"/><circle cx="15" cy="5" r="0.47" fill="url(#gw)" class="st"/><circle cx="13" cy="3" r="0.47" fill="url(#gb)" class="st"/><circle cx="15" cy="8" r="0.47" fill="url(#gw)" class="st"/><circle cx="14" cy="9" r="1.05" class="rg r1"/><circle cx="14" cy="9" r="1.8" class="rg r2"/><circle cx="14" cy="9" r="0.6" class="rg pulse"/><circle cx="14" cy="9" r="0.62" class="glow"/><circle cx="14" cy="9" r="0.47" fill="url(#gb)" class="st"/><text x="14" y="9" class="mv">37</text></svg>
+    <span class="kifu">2016년 3월 10일 · 제2국 흑 37</span>
+  </div>
+
+  <div class="pad">
+    <header class="head">
+      <button class="avatar" id="avatar" type="button" aria-label="프로필 크게 보기">수</button>
+      <h1 aria-label="좋은수"><span aria-hidden="true">좋</span><span aria-hidden="true">은</span><span aria-hidden="true">수</span></h1>
+      <p class="tagline">책과 영화를 여러 번 다시 보고, 놓친 채 지나간 설명을 <span class="mark">복기합니다.</span></p>
+    </header>
+
+    <nav class="links" aria-label="글 보러 가기">
+      <a class="btn" href="https://blog.naver.com/goodmove-kr" target="_blank" rel="noopener">
+        <span class="txt"><b>네이버 블로그</b> <span class="sub">: 좋은수 다시보기</span></span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="btn" href="https://blog.naver.com/goodmove-kr/224439096272" target="_blank" rel="noopener">
+        <span class="txt"><b>대표 글</b> <span class="sub">: 타짜 평경장은 왜 평경장일까</span></span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="btn" href="https://goodmovekr.substack.com" target="_blank" rel="noopener">
+        <span class="txt"><b>영어판</b> <span class="sub">: GoodMove (Substack)</span></span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </nav>
+
+    <div class="soon">
+      <h3>곧 열어요</h3>
+      <div class="links" style="margin-top:0">
+        <div class="btn off" role="button" tabindex="0" aria-disabled="true"><svg class="border" aria-hidden="true"><rect x=".5" y=".5" rx="10" ry="10" width="100" height="40"/></svg><span class="txt"><b>브런치</b> <span class="sub">: 좋은수 글, 브런치 결로 다시 씀</span></span><span class="badge">준비 중</span><span class="tip">곧 열려요</span></div>
+        <div class="btn off" role="button" tabindex="0" aria-disabled="true"><svg class="border" aria-hidden="true"><rect x=".5" y=".5" rx="10" ry="10" width="100" height="40"/></svg><span class="txt"><b>책</b> <span class="sub">: 교보문고 퍼플에서 펴낼 한국어 책</span></span><span class="badge">준비 중</span><span class="tip">곧 열려요</span></div>
+        <div class="btn off" role="button" tabindex="0" aria-disabled="true"><svg class="border" aria-hidden="true"><rect x=".5" y=".5" rx="10" ry="10" width="100" height="40"/></svg><span class="txt"><b>후원</b> <span class="sub">: 다음 글을 응원하는 방법</span></span><span class="badge">준비 중</span><span class="tip">곧 열려요</span></div>
+      </div>
+    </div>
+
+    <div class="sns" aria-label="알림 받는 곳">
+      <a class="chip" href="https://x.com/GoodMoveKR" target="_blank" rel="noopener">X</a>
+      <a class="chip" href="https://bsky.app/profile/goodmovekr.bsky.social" target="_blank" rel="noopener">Bluesky</a>
+      <a class="chip" href="https://www.threads.com/@goodmovekr" target="_blank" rel="noopener">Threads</a>
+      <a class="chip" href="https://www.instagram.com/goodmovekr/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+
+    <section class="card" aria-labelledby="about">
+      <h2 id="about">다시 보면 보이는 것</h2>
+      <p>영화를 보다 보면 그냥 지나가는 게 있어요. 낯선 이름, 귀에 걸리는 말투, 대문 옆 문패 한 장. 영화는 설명하지 않고 넘어가죠. 저는 그게 궁금해서 다시 보고, 찾아보고, 적습니다.</p>
+      <p>필명 좋은수는 '좋은 수'에서 왔어요. 수는 숫자이기도 하고, 바둑 한 수이기도 하고, 방법이기도 하죠.</p>
+      <dl class="qa">
+        <div><dt>무엇을 쓰나요</dt><dd>좋아하는 한국 영화와 방송. 지금은 최동훈 감독 영화부터.</dd></div>
+        <div><dt>어디에 쓰나요</dt><dd>한국어는 네이버 블로그, 영어는 Substack.</dd></div>
+        <div><dt>연락은 어디로</dt><dd class="mail"><span id="mail">thinkgoodnumber@naver.com</span><button class="copy" id="copy" type="button"><svg class="ck" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>복사</span></button></dd></div>
+      </dl>
+    </section>
+
+    <footer>
+      <p>이 페이지는 쿠키를 쓰지 않고, 방문을 세지 않습니다.</p>
+      <p>바깥 글꼴도 불러오지 않아요.</p>
+      <p>마지막 손질: 2026년 10월 23일</p>
+    </footer>
+  </div>
+</div>
+
+<div class="zoom" id="zoom" role="dialog" aria-label="프로필 크게 보기"><div class="big">수</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* 9 프로필 */
+  var av=document.getElementById('avatar'),zoom=document.getElementById('zoom');
+  function close(){zoom.classList.remove('on');av.focus();}
+  av.addEventListener('click',function(){zoom.classList.add('on');});
+  zoom.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&zoom.classList.contains('on'))close();});
+  /* 4 누른 자리 물결 */
+  document.querySelectorAll('.links .btn:not(.off)').forEach(function(b){
+    b.addEventListener('pointerdown',function(e){
+      if(still)return;
+      var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)*2.2,w=document.createElement('span');
+      w.className='wave';w.style.width=w.style.height=s+'px';
+      w.style.left=(e.clientX-r.left-s/2)+'px';w.style.top=(e.clientY-r.top-s/2)+'px';
+      b.appendChild(w);setTimeout(function(){w.remove();},700);
+    });
+  });
+  /* 5 흐르는 점선, 말풍선 */
+  var offs=[].slice.call(document.querySelectorAll('.btn.off'));
+  function fit(){offs.forEach(function(o){var r=o.getBoundingClientRect(),rc=o.querySelector('rect');rc.setAttribute('width',Math.max(0,r.width-1));rc.setAttribute('height',Math.max(0,r.height-1));});}
+  fit();addEventListener('resize',fit);
+  if(!still){var d=0;(function step(){d=(d-0.25)%11;offs.forEach(function(o){o.querySelector('rect').style.strokeDashoffset=d;});requestAnimationFrame(step);})();}
+  offs.forEach(function(o){
+    var t;function tip(){o.classList.add('show');clearTimeout(t);t=setTimeout(function(){o.classList.remove('show');},1400);}
+    o.addEventListener('click',tip);
+    o.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();tip();}});
+  });
+  /* 6 따라오는 빛 */
+  var card=document.querySelector('.card');
+  card.addEventListener('pointermove',function(e){var r=card.getBoundingClientRect();card.style.setProperty('--mx',(e.clientX-r.left)+'px');card.style.setProperty('--my',(e.clientY-r.top)+'px');});
+  /* 8 복사 */
+  var btn=document.getElementById('copy'),mail=document.getElementById('mail'),toast=document.getElementById('toast'),ct;
+  function show(msg,ok){
+    toast.textContent=msg;toast.classList.add('on');
+    if(ok){btn.classList.remove('done');void btn.offsetWidth;btn.classList.add('done');btn.lastElementChild.textContent='복사됨';}
+    clearTimeout(ct);ct=setTimeout(function(){toast.classList.remove('on');btn.classList.remove('done');btn.lastElementChild.textContent='복사';},1800);
+  }
+  function selectIt(){var r=document.createRange();r.selectNodeContents(mail);var s=getSelection();s.removeAllRanges();s.addRange(r);show('주소를 골라 두었어요. 길게 눌러 복사하세요',false);}
+  btn.addEventListener('click',function(){
+    try{navigator.clipboard.writeText(mail.textContent).then(function(){show('주소를 복사했어요',true);},selectIt);}catch(e){selectIt();}
+  });
+})();
+</script>
+</body>
+</html>
